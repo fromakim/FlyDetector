@@ -10,4 +10,6 @@ class Setup {
     public:
 
     void getUserInput();
+    string getPath();
+    double getFps();
 };

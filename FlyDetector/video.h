@@ -6,7 +6,10 @@ class Video {
     
     VideoCapture cap;
     int length;
-    
+    int width;
+    int height;
+    float fps;
+
     public:
     
     Video(string path = "C:/Users/FromaKim/Downloads/fly_movie.avi/fly_movie.avi"); // Dev
