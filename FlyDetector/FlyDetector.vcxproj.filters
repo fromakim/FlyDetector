@@ -30,6 +30,9 @@
     <ClCompile Include="frame.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="roi.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -44,10 +47,23 @@
     <ClInclude Include="frame.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="roi.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="fly_movie.avi">
       <Filter>리소스 파일</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="resource.mp4">
+      <Filter>리소스 파일</Filter>
+    </Media>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="pic.jpg">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
 </Project>

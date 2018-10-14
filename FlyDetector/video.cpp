@@ -6,14 +6,15 @@ Video::Video() {
 
 void Video::setVideo(string path) {
     this->cap = VideoCapture(path);
-    if (!cap.isOpened()) {
+    if (!this->cap.isOpened()) {
         throw "Cannot Find Video";
     }
 
-    this->length = cap.get(CV_CAP_PROP_FRAME_COUNT);
-    this->width = cap.get(CV_CAP_PROP_FRAME_WIDTH);
-    this->height = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
-    this->fps = cap.get(CV_CAP_PROP_FPS);
+    this->length = this->cap.get(CV_CAP_PROP_FRAME_COUNT);
+    this->width = this->cap.get(CV_CAP_PROP_FRAME_WIDTH);
+    this->height = this->cap.get(CV_CAP_PROP_FRAME_HEIGHT);
+    this->fps = this->cap.get(CV_CAP_PROP_FPS);
+	this->duration = this->cap.get(CAP_PROP_FRAME_COUNT) / this->cap.get(CAP_PROP_FPS);
     cout << "Video Set with:" << endl;
     cout << "Name: " << endl;
     cout << "Frames: " << this->length << endl;
@@ -33,6 +34,10 @@ Frame Video::getFrameBySecond(double second) {
     if (!success) throw "Cannot read Frame";
 
     return Frame(frame, num, second * 1000.0);
+}
+
+double Video::getDuration() {
+	return this->duration;
 }
 
 void Video::display() {

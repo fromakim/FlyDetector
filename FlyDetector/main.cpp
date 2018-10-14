@@ -2,25 +2,26 @@
 #include "setup.h"
 #include "video.h"
 #include "frame.h"
+#include "roi.h"
 
 int main(int argc, char **argv) {
     Setup setup;
     Video video;
+	Roi roi;
 
     setup.getUserInput();
 
     if (setup.getPath() == "none") {
-        video.setVideo("fly_movie.avi");
+        video.setVideo("resource.mp4");
     }
     else {
         video.setVideo(setup.getPath());
     }
 
-    for (int i = 0; i < 20; ++i) {
-        Frame f = video.getFrameBySecond(i);
+    Frame f = video.getFrameBySecond(0);
 
-        f.showFrame();
-    }
+	roi.findRoi(f);
+	roi.findFly(f);
 
     waitKey();
 

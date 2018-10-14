@@ -9,12 +9,14 @@ class Video {
     int length;
     int width;
     int height;
-    float fps;
+    double fps;
+	double duration;
 
     public:
     
     Video();
     void setVideo(string path = "fly_movie.avi");
+	double getDuration();
 
     Frame getFrameBySecond(double second);
 

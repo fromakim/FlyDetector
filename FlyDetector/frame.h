@@ -12,5 +12,10 @@ class Frame {
 
     Frame(Mat frame, int num, double ms);
 
+	Mat getFrame();
+
     void showFrame();
+	void saveFrame(int index);
+
+	Mat binarize();
 };
