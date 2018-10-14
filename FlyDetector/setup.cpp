@@ -6,3 +6,11 @@ void Setup::getUserInput() {
     cout << "FPS: ";
     cin >> this->fps;
 }
+
+string Setup::getPath() {
+    return this->path;
+}
+
+double Setup::getFps() {
+    return this->fps;
+}

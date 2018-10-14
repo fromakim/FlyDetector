@@ -1,5 +1,6 @@
 #pragma once
 #include "stdafx.h"
+#include "frame.h"
 
 class Video {
     private:
@@ -12,9 +13,10 @@ class Video {
 
     public:
     
-    Video(string path = "C:/Users/FromaKim/Downloads/fly_movie.avi/fly_movie.avi"); // Dev
-};
+    Video();
+    void setVideo(string path = "fly_movie.avi");
 
-class Capture {
-    Mat capture;
+    Frame getFrameBySecond(double second);
+
+    void display();
 };
