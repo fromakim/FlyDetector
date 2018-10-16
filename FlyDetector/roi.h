@@ -10,8 +10,12 @@ class Roi {
 	double height;
 	double centroid[2];
 
+    static bool select;
+    static Rect range;
+    static void onMouseEvent(int event, int x, int y, int flags, void *dstImage);
+    
 	public:
-
-	void findRoi(Frame source);
+    
+	void setRange(Frame source);
 	void findFly(Frame source);
 };

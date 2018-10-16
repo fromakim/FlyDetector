@@ -18,10 +18,9 @@ int main(int argc, char **argv) {
         video.setVideo(setup.getPath());
     }
 
-    Frame f = video.getFrameBySecond(0);
-
-	roi.findRoi(f);
-	roi.findFly(f);
+    Frame f = video.getFrameBySecond(1);
+    f.showFrame();
+	roi.setRange(f);
 
     waitKey();
 
