@@ -30,3 +30,30 @@ Mat Frame::binarize() {
 	threshold(binary, binary, 100, 255, THRESH_BINARY);
 	return binary;
 }
+
+void Frame::setROI() {
+	this->roi.setRange(this->frame);
+}
+
+void Frame::setRanges() {
+	vector<Rect> temp = this->roi.getRanges();
+
+	int i = 0;
+	for (vector<Rect>::iterator itor = temp.begin(); itor < temp.end(); ++itor) {
+		this->Ranges.push_back(temp.at(i));
+		i = i + 1;
+	}
+
+	cout << "=== Current Ranges in the Frame ===" << endl;
+	i = 0;
+	for (vector<Rect>::iterator itor = this->Ranges.begin(); itor < this->Ranges.end(); ++itor) {
+		cout << "Index " << i << ": " << this->Ranges.at(i) << endl;
+		i = i + 1;
+	}
+
+	this->Ranges = this->roi.getRanges();
+	this->roi.clean();
+
+	temp = this->roi.getRanges();
+	cout << "Checking Deletion: The size of the temp is " << temp.size() << endl;
+}

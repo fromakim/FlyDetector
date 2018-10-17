@@ -1,6 +1,5 @@
 #pragma once
 #include "stdafx.h"
-#include "frame.h"
 
 class Roi {
 	private:
@@ -9,13 +8,18 @@ class Roi {
 	double width;
 	double height;
 	double centroid[2];
-
-    static bool select;
+	
+	static bool changed;
+	static Mat origin;
+	static Mat source;
+	static bool select;
     static Rect range;
-    static void onMouseEvent(int event, int x, int y, int flags, void *dstImage);
+	static vector<Rect> ranges;
+	static void onMouseEvent(int event, int x, int y, int flags, void *param);
     
 	public:
     
-	void setRange(Frame source);
-	void findFly(Frame source);
+	void setRange(Mat source);
+	vector<Rect> getRanges();
+	void clean();
 };

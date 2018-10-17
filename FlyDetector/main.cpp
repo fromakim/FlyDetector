@@ -19,8 +19,11 @@ int main(int argc, char **argv) {
     }
 
     Frame f = video.getFrameBySecond(1);
-    f.showFrame();
-	roi.setRange(f);
+    
+	f.setROI();
+	cout << "Move to Set Range" << endl;
+	waitKey();
+	f.setRanges();
 
     waitKey();
 
