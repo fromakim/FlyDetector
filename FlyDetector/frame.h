@@ -10,7 +10,8 @@ class Frame {
     double ms;
 	Roi roi;
 
-	vector<Rect> Ranges;
+	vector<Mat> Ranges;
+	vector<Rect> rects;
 
     public:
 
@@ -23,6 +24,10 @@ class Frame {
 	
 	void setROI();
 	void setRanges();
+
+	vector<Mat> getRanges();
+	vector<Mat> getRanges(vector<Rect> rect);
+	vector<Rect> getRects();
 
 	Mat binarize();
 };

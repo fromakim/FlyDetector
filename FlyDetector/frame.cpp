@@ -37,23 +37,34 @@ void Frame::setROI() {
 
 void Frame::setRanges() {
 	vector<Rect> temp = this->roi.getRanges();
+	this->rects = this->roi.getRanges();
 
 	int i = 0;
 	for (vector<Rect>::iterator itor = temp.begin(); itor < temp.end(); ++itor) {
-		this->Ranges.push_back(temp.at(i));
+		this->Ranges.push_back(Mat(this->frame, temp.at(i)));
 		i = i + 1;
 	}
 
-	cout << "=== Current Ranges in the Frame ===" << endl;
-	i = 0;
-	for (vector<Rect>::iterator itor = this->Ranges.begin(); itor < this->Ranges.end(); ++itor) {
-		cout << "Index " << i << ": " << this->Ranges.at(i) << endl;
-		i = i + 1;
-	}
-
-	this->Ranges = this->roi.getRanges();
 	this->roi.clean();
 
 	temp = this->roi.getRanges();
 	cout << "Checking Deletion: The size of the temp is " << temp.size() << endl;
+	cout << "Checking Deletion: The size of the rects is " << rects.size() << endl;
+	// imwrite("cropped range.png", this->Ranges.at(0));
+	waitKey();
+}
+
+vector<Mat> Frame::getRanges() {
+	return this->Ranges;
+}
+
+vector<Mat> Frame::getRanges(vector<Rect> rect) {
+	for (vector<Rect>::iterator itor = rect.begin(); itor != rect.end(); ++itor) {
+		this->Ranges.push_back(Mat(this->frame, *itor));
+	}
+	return this->Ranges;
+}
+
+vector<Rect> Frame::getRects() {
+	return this->rects;
 }

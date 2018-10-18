@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="analyzer.cpp" />
     <ClCompile Include="frame.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="roi.cpp" />
@@ -144,6 +145,7 @@
     <ClCompile Include="video.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="analyzer.h" />
     <ClInclude Include="frame.h" />
     <ClInclude Include="roi.h" />
     <ClInclude Include="setup.h" />
