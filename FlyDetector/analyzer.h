@@ -9,4 +9,5 @@ public:
 	void setSource(vector<Mat> source);
 	void binarize();
 	void getLocation(vector<Mat> next);
+    void findFeature();
 };

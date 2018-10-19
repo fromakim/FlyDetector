@@ -32,3 +32,7 @@ void Analyzer::getLocation(vector<Mat> next) {
 	// imshow("Current", this->curr.at(0));
 	waitKey();
 }
+
+void Analyzer::findFeature() {
+
+}
