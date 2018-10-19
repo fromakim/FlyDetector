@@ -26,7 +26,7 @@ void Frame::saveFrame(int index) {
 Mat Frame::binarize() {
 	Mat binary;
 	cvtColor(this->frame, binary, COLOR_RGB2GRAY);
-	imshow("GrayScale", binary);
+	// imshow("GrayScale", binary);
 	threshold(binary, binary, 100, 255, THRESH_BINARY);
 	return binary;
 }
