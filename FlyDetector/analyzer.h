@@ -3,11 +3,20 @@
 
 class Analyzer {
 private:
-	vector<Mat> prev;
-	vector<Mat> curr;
+	Mat criterion;
+	vector<Point> point;
+	vector<Point> tip;
+	Mat input;
+	vector<int> distance;
+
+	static bool pointCompare(Point a, Point b);
+	Mat extractTip(Mat source);
 public:
-	void setSource(vector<Mat> source);
-	void binarize();
-	void getLocation(vector<Mat> next);
-    void findFeature();
+	void setCriterion(Mat source);
+	void setInput(Mat next);
+	
+	vector<int> getDistance();
+
+	void calculateCriterion();
+	void calculate();
 };

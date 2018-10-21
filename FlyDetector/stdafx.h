@@ -8,3 +8,8 @@ using namespace std;
 
 constexpr auto THRESHOLD1 = 100;
 constexpr auto THRESHOLD2 = 255;
+
+constexpr auto EPSILON1 = 15;
+constexpr auto EPSILON2 = 25;
+
+constexpr auto NUMBER_OF_ROI = 7;

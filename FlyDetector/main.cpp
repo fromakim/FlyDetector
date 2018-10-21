@@ -11,85 +11,102 @@ void onMouseEvent(int event, int x, int y, int flags, void *param) {
     
     switch (event) {
         case CV_EVENT_LBUTTONDOWN:
-            int number[7] = { 0, 0, 0, 0, 0, 0, 0 };
-
             cout << "Point: " << x << ", " << y << endl;
-
-            for (int i = 0; i < 7; ++i) {
-                for (int j = 0; j < 7; ++j) {
-                    
-                    if ((int)source->at<unsigned char>(Point(x - 9 + 3 * j, y - 9 + 3 * i)) == 255) {
-                        cout << "WHITE ";
-                    }
-                    else {
-                        cout << "BLACK ";
-                        number[i] += 1;
-                    }
-                }
-                cout << endl;
-            }
-            cout << endl;
-
-            for (int i = 0; i < 7; ++i)
-                cout << number[i] << endl;
-            cout << endl;
     }
 }
 
-Mat func(Mat source) {
+bool pointCompare(Point a, Point b) {
+	return (a.y > b.y);
+}
+
+Mat extractTip(Mat source, vector<Point> &tip) {
     vector<KeyPoint> vertex;
+	vector<Point> vertexPoint;
     Mat result = source.clone();
     
     FAST(source, vertex, 50, false);
 
     for (vector<KeyPoint>::iterator itor = vertex.begin(); itor != vertex.end(); ++itor) {
-        int number[7] = { 0, 0, 0, 0, 0, 0, 0 };
-        int near[7][7];
-        bool foundBlack = false;
-        bool foundWhite = false;
+		bool isSimilar = false;
 
-        if (itor->pt.x - 9 < 0 || itor->pt.y - 9 < 0 || itor->pt.x + 9 > source.cols || itor->pt.y + 9 > source.rows) {
-            break;
-        }
+		for (vector<Point>::iterator pointItor = vertexPoint.begin(); pointItor != vertexPoint.end(); ++pointItor) {
+			Point pt = itor->pt;
+			double distance = norm(pt - *pointItor);
 
-        for (int i = 0; i < 7; ++i) {
-            for (int j = 0; j < 7; ++j) {
-                near[i][j] = (int)source.at<unsigned char>(Point(itor->pt.x - 9 + 3 * j, itor->pt.y - 9 + 3 * i));
-                
-                if (near[i][j] == 0) {
-                    if (foundBlack == false && foundWhite == false) {       // region starts with black
-                        number[i] += 1;
-                        foundBlack = true;
-                    }
-                    else if (foundBlack == false && foundWhite == true) {       // region starts with white and firstly find black
-                        number[i] += 1;
-                    }
-                    else if (foundBlack == true && foundWhite == true) {       // region finds another white after black
-                        number[i] = 0;
-                        break;
-                    }
-                }
-                if (near[i][j] == 255) {
-                    foundWhite = true;
-                }
-            }
-        }
-
-        for (int i = 0; i < 7; ++i) {
-            if (i != 6 && number[i] < number[i + 1])
-                break;
-            if (i == 6) {
-                if (number[3] > 0 && itor->pt.y > 420)
-                    circle(result, itor->pt, 10, Scalar(0));
-            }
-        }
-        circle(result, itor->pt, 5, Scalar(125));
+			if (distance < EPSILON1)
+				isSimilar = true;
+		}
+		if (!isSimilar) {
+			vertexPoint.push_back(itor->pt);
+		}
     }
-    cout << source.rows << endl;
+	sort(vertexPoint.begin(), vertexPoint.end(), pointCompare);
+	for (vector<Point>::iterator itor = vertexPoint.begin(); itor != vertexPoint.end(); ++itor) {
+		bool isSimilar = false;
+		
+		for (vector<Point>::iterator tipItor = tip.begin(); tipItor != tip.end(); ++tipItor) {
+			if (abs(itor->x - tipItor->x) < EPSILON2) {
+				isSimilar = true;
+			}
+		}
+
+		if (!isSimilar) {
+			tip.push_back(*itor);
+		}
+	}
+	cout << endl << "TIP" << endl;
+	for (vector<Point>::iterator itor = tip.begin(); itor != tip.end(); ++itor) {
+		circle(result, *itor, 5, Scalar(0));
+		cout << *itor << " ";
+	}
+
+	cout << endl;
     return result;
 }
 
+void dummy() {
+	/*
+	int number[7] = { 0, 0, 0, 0, 0, 0, 0 };
+	int near[7][7];
+	bool foundBlack = false;
+	bool foundWhite = false;
+
+	if (itor->pt.x - 9 < 0 || itor->pt.y - 9 < 0 || itor->pt.x + 9 > source.cols || itor->pt.y + 9 > source.rows) {
+		break;
+	}
+
+	for (int i = 0; i < 7; ++i) {
+		for (int j = 0; j < 7; ++j) {
+			near[i][j] = (int)source.at<unsigned char>(Point(itor->pt.x - 9 + 3 * j, itor->pt.y - 9 + 3 * i));
+
+			if (near[i][j] == 0) {
+				if (foundBlack == false && foundWhite == false) {       // region starts with black
+					number[i] += 1;
+					foundBlack = true;
+				}
+				else if (foundBlack == false && foundWhite == true) {       // region starts with white and firstly find black
+					number[i] += 1;
+				}
+				else if (foundBlack == true && foundWhite == true) {       // region finds another white after black
+					number[i] = 0;
+					break;
+				}
+			}
+			if (near[i][j] == 255) {
+				foundWhite = true;
+			}
+		}
+	}
+	if (itor->pt.y > 420)
+		circle(result, itor->pt, 5, Scalar(125));
+	*/
+}
+
 int main(int argc, char **argv) {
+	cv::Point a(1, 3);
+	cv::Point b(5, 6);
+	double res = cv::norm(a - b);
+
     Setup setup;
     Video video;
 	Analyzer analyzer;
@@ -132,10 +149,10 @@ int main(int argc, char **argv) {
     */
 
     // Method 1
-    /*
     Mat result = target.clone();
+	vector<Point> tip;
     erode(result, result, cv::Mat());
-    result = func(result);
+    result = extractTip(result, tip);
 
     namedWindow("Test Before");
     namedWindow("Test After");
@@ -146,15 +163,15 @@ int main(int argc, char **argv) {
     imshow("Test Before", target);
     imshow("Test After", result);
 
-    setMouseCallback("Test After", onMouseEvent, (void *)&result);
-    waitKey();
-    */
+	cout << "OUTSIDE" << endl;
+	for (vector<Point>::iterator itor = tip.begin(); itor != tip.end(); ++itor) {
+		cout << *itor << " ";
+	}
 
-    // Method 2
-    Mat comp = target.clone();
-    erode(comp, comp, cv::Mat());
-    dilate(comp, comp, cv::Mat());
-    imshow("Dilate", comp);
+	analyzer.setCriterion(target);
+	analyzer.calculateCriterion();
+
+    setMouseCallback("Test After", onMouseEvent, (void *)&result);
     waitKey();
 
     return 0;
