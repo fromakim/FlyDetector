@@ -151,25 +151,46 @@ int main(int argc, char **argv) {
     // Method 1
     Mat result = target.clone();
 	vector<Point> tip;
-    erode(result, result, cv::Mat());
-    result = extractTip(result, tip);
+	// erode(target, result, cv::Mat());
 
-    namedWindow("Test Before");
-    namedWindow("Test After");
-
-    moveWindow("Test Before", 0, 300);
-    moveWindow("Test After", 1000, 300);
-
-    imshow("Test Before", target);
-    imshow("Test After", result);
-
-	cout << "OUTSIDE" << endl;
-	for (vector<Point>::iterator itor = tip.begin(); itor != tip.end(); ++itor) {
-		cout << *itor << " ";
-	}
-
-	analyzer.setCriterion(target);
+	analyzer.setCriterion(result);
 	analyzer.calculateCriterion();
+	analyzer.setPointsAndTips(result);
+
+	vector<Point> originalPoint = analyzer.getPoints();
+	vector<Point> originalTip = analyzer.getTips();
+	// analyzer.calculateCriterion();
+
+	cvtColor(result, result, COLOR_GRAY2RGB);
+	for (vector<Point>::iterator itor = originalPoint.begin(); itor != originalPoint.end(); ++itor) {
+		circle(result, *itor, 5, Scalar(255, 0, 0));
+	}
+	imshow("Original", result);
+	waitKey();
+
+	for (int i = 0; i < 10; ++i) {
+		Frame input = video.getFrameBySecond(i + 2);
+		Mat bin = input.binarize();
+		Mat color;
+		cvtColor(bin, color, COLOR_GRAY2RGB);
+
+		analyzer.setPointsAndTips(bin);
+		vector<Point> newPoints = analyzer.getPoints();
+		
+		cout << "Original" << endl;
+		for (vector<Point>::iterator itor = originalPoint.begin(); itor != originalPoint.end(); ++itor) {
+			cout << *itor << endl;
+			circle(color, *itor, 5, Scalar(255, 0, 0));
+		}
+		cout << "New" << endl;
+		for (vector<Point>::iterator itor = newPoints.begin(); itor != newPoints.end(); ++itor) {
+			cout << *itor << endl;
+			circle(color, *itor, 5, Scalar(0, 0, 255));
+		}
+
+		imshow("Test", color);
+		waitKey();
+	}
 
     setMouseCallback("Test After", onMouseEvent, (void *)&result);
     waitKey();
