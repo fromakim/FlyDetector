@@ -21,11 +21,12 @@ public:
 	vector<Point> getPoints();
 	vector<Point> getTips();
 	vector<int> getDistance();
+    vector<Point> getFlies();
 
 	void calculateCriterion();
 	void calculate(vector<Point> origin);
 
-	Point getClosestPoint(vector<Point> fly);
+	Point getClosestPoint(Point fly);
 
 	friend void onMouse(int event, int x, int y, int flag, void *param);
 };

@@ -82,10 +82,14 @@ vector<int> Analyzer::getDistance() {
 	return this->distance;
 }
 
+vector<Point> Analyzer::getFlies() {
+    return this->fly;
+}
+
 void Analyzer::calculateCriterion() {
 	namedWindow("Set the initial location of flies");
 	moveWindow("Set the initial location of flies", 0, 0);
-	imshow("Set the initial location of flies", this->criterion);
+	cv::imshow("Set the initial location of flies", this->criterion);
 
 	setMouseCallback("Set the initial location of flies", onMouse, this);
 }
@@ -112,26 +116,31 @@ void Analyzer::calculate(vector<Point> origin) {
 	}
 }
 
-Point Analyzer::getClosestPoint(vector<Point> fly) {
-	Point closest;
-	int diffMin = 99999;
-	
-	for (vector<Point>::iterator itor = point.begin(); itor != point.end(); ++itor) {
-		int xdiff = abs(x - itor->x);
-		int ydiff = abs(y - itor->y);
+Point Analyzer::getClosestPoint(Point fly) {
+    Point closest;
+    int diffMin = 99999;
+    
+    for (vector<Point>::iterator itor = this->point.begin(); itor != this->point.end(); ++itor) {
+        int xdiff = abs(fly.x - itor->x);
+        int ydiff = abs(fly.y - itor->y);
 
-		if (sqrt(xdiff * xdiff + ydiff * ydiff) < diffMin) {
-			diffMin = sqrt(xdiff * xdiff + ydiff * ydiff);
-			closest = *itor;
-		}
-	}
+        if (xdiff > EPSILON2) {
+            continue;
+        }
+
+        if (ydiff < diffMin) {
+            diffMin = ydiff;
+            closest = *itor;
+        }
+    }
+    return closest;
 }
 
 void onMouse(int event, int x, int y, int flag, void *param) {
 	Analyzer *analyzer = (Analyzer *)param;
 	Point closest;
 	int diffMin = 99999;
-
+    
 	for (vector<Point>::iterator itor = analyzer->point.begin(); itor != analyzer->point.end(); ++itor) {
 		int xdiff = abs(x - itor->x);
 		int ydiff = abs(y - itor->y);
@@ -175,6 +184,5 @@ void onMouse(int event, int x, int y, int flag, void *param) {
 		break;
 	}
 
-	
-	imshow("Set the initial location of flies", analyzer->flylocation);
+	cv::imshow("Set the initial location of flies", analyzer->flylocation);
 }
