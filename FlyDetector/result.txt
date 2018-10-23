@@ -1,0 +1,20 @@
+Frame Number 1 18 5 0 
+Frame Number 2 44 18 1 
+Frame Number 3 53 14 0 
+Frame Number 4 67 19 0 
+Frame Number 5 71 18 1 
+Frame Number 6 71 20 1 
+Frame Number 7 72 26 1 
+Frame Number 8 73 27 0 
+Frame Number 9 74 32 0 
+Frame Number 10 74 37 0 
+Frame_Number_1 18 5 0 
+Frame_Number_2 44 18 1 
+Frame_Number_3 53 14 0 
+Frame_Number_4 67 19 0 
+Frame_Number_5 71 18 1 
+Frame_Number_6 71 20 1 
+Frame_Number_7 72 26 1 
+Frame_Number_8 73 27 0 
+Frame_Number_9 74 32 0 
+Frame_Number_10 74 37 0 

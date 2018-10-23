@@ -69,6 +69,8 @@ int main(int argc, char **argv) {
     Video video;
 	Analyzer analyzer;
     ofstream fout;
+    time_t now;
+    struct tm *ptm;
 
     setup.getUserInput();
     fout.open("result.txt", ios::app);
@@ -118,6 +120,8 @@ int main(int argc, char **argv) {
 
             distance.push_back(abs(newFlyPoint.y - itor->y));
         }
+
+        fout << "Frame_Number_" << i + 1 << " ";
         for (vector<double>::iterator itor = distance.begin(); itor != distance.end(); ++itor) {
             fout << *itor << " ";
         }
