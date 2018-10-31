@@ -17,6 +17,7 @@ public:
 	void setCriterion(Mat source);
 	void setInput(Mat next);
 	Mat setPointsAndTips(Mat source);
+    void setDistanceZero();
 	
 	vector<Point> getPoints();
 	vector<Point> getTips();
@@ -24,9 +25,11 @@ public:
     vector<Point> getFlies();
 
 	void calculateCriterion();
-	void calculate(vector<Point> origin);
+	void calculate(Mat color, vector<Point> origin);
 
 	Point getClosestPoint(Point fly);
+
+    vector<double> getDistanceMoved(vector<double> flysize);
 
 	friend void onMouse(int event, int x, int y, int flag, void *param);
 };

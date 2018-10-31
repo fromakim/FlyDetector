@@ -12,6 +12,7 @@ void onMouseEvent(int event, int x, int y, int flags, void *param) {
     switch (event) {
         case CV_EVENT_LBUTTONDOWN:
             cout << "Point: " << x << ", " << y << endl;
+            cout << "Value: " << (int) source->at<unsigned char>(y, x) << endl;
     }
 }
 
@@ -73,7 +74,7 @@ int main(int argc, char **argv) {
     struct tm *ptm;
 
     setup.getUserInput();
-    fout.open("result.txt", ios::app);
+    fout.open("result.txt")  ;
 
     if (setup.getPath() == "none") {
         video.setVideo("resource.mp4");
@@ -83,35 +84,111 @@ int main(int argc, char **argv) {
     }
 
     Frame f = video.getFrameBySecond(1);
-    Mat target = f.binarize();
+    Mat target = f.getFrame();
+    vector<double> flySize;
+
+    cvtColor(target, target, COLOR_RGB2GRAY);
+    imshow("TEMP", target);
+    cv::setMouseCallback("TEMP", onMouseEvent, &target);
+    waitKey();
+
+    // Nomalize the intensity
+    int min = 255;
+
+    for (int i = 0; i < target.rows; ++i) {
+        for (int j = 0; j < target.cols; ++j) {
+            int val = target.at<unsigned char>(i, j);
+
+            if (val < min) {
+                min = val;
+            }
+        }
+    }
+    cout << "MIN: " << min << endl;
+    waitKey();
+    for (int i = 0; i < target.rows; ++i) {
+        for (int j = 0; j < target.cols; ++j) {
+            target.at<unsigned char>(i, j) = (target.at<unsigned char>(i, j) - min) * 255 / (255 - min);
+        }
+    }
+    Mat filtered;
+    
+
+    threshold(target, filtered, 80, 255, THRESH_BINARY);
+
+    erode(filtered, filtered, cv::Mat());
+    imshow("MERGED", target);
+    imshow("FILTERED", filtered);
+
+    
+    waitKey();
+    // Ends
+    
+    setup.setFly(target);
+    setup.setAngle();
+    flySize = setup.getFlySize();
 
     // Method 1
     Mat result = target.clone();
 	vector<Point> tip;
-	// erode(target, result, cv::Mat());
+	// erode(target, result, cv::Mat());  
 
 	analyzer.setCriterion(result);
 	analyzer.calculateCriterion();
 	analyzer.setPointsAndTips(result);
-
-    waitKey();
+    
+    cv::waitKey();
 	vector<Point> originalPoint = analyzer.getPoints();
 	vector<Point> originalTip = analyzer.getTips();
     vector<Point> flies = analyzer.getFlies();
     
     cout << "FLY: " << flies.size() << endl;
 
-	for (int i = 0; i < 10; ++i) {
-		Frame input = video.getFrameBySecond(i + 2);
-		Mat bin = input.binarize();
-		Mat color;
-        vector<double> distance;
+    fout << "FLY_SIZE" << " ";
+    for (vector<double>::iterator itor = flySize.begin(); itor != flySize.end(); ++itor) {
+        fout << *itor << " ";
+    }
+    fout << endl;
+
+	for (int i = 1 + setup.getFps(); i < video.getDuration(); i = i + setup.getFps()) {
+		Frame input = video.getFrameBySecond(i);
+		Mat bin, color;
+        vector<int> distance;
+        int min = 255;
+
+        cout << "Frame of " << i << "s is coming in." << endl;
+
+        cvtColor(input.getFrame(), bin, COLOR_RGB2GRAY);
+
+        for (int i = 0; i < bin.rows; ++i) {
+            for (int j = 0; j < bin.cols; ++j) {
+                int val = bin.at<unsigned char>(i, j);
+
+                if (val < min) {
+                    min = val;
+                }
+            }
+        }
+        cout << "MIN: " << min << endl;
+        waitKey();
+        for (int i = 0; i < bin.rows; ++i) {
+            for (int j = 0; j < bin.cols; ++j) {
+                bin.at<unsigned char>(i, j) = (bin.at<unsigned char>(i, j) - min) * 255 / (255 - min);
+            }
+        }
 
         cvtColor(bin, color, COLOR_GRAY2RGB);
 
 		analyzer.setPointsAndTips(bin);
+        analyzer.calculate(color, flies);
+        distance = analyzer.getDistance();
+        analyzer.setDistanceZero();
 
-
+        for (vector<int>::iterator itor = distance.begin(); itor != distance.end(); ++itor) {
+            cout << *itor << " ";
+        }
+        cout << endl;
+        /*
         for (vector<Point>::iterator itor = flies.begin(); itor != flies.end(); ++itor) {
             Point newFlyPoint = analyzer.getClosestPoint(*itor);
             
@@ -120,19 +197,18 @@ int main(int argc, char **argv) {
 
             distance.push_back(abs(newFlyPoint.y - itor->y));
         }
+        */
 
-        fout << "Frame_Number_" << i + 1 << " ";
-        for (vector<double>::iterator itor = distance.begin(); itor != distance.end(); ++itor) {
+        fout << i << "s ";
+        int j = 0;
+        for (vector<int>::iterator itor = distance.begin(); itor != distance.end(); ++itor) {
             fout << *itor << " ";
         }
         fout << endl;
-
-		imshow("Test", color);
-		waitKey();
 	}
 
-    setMouseCallback("Test After", onMouseEvent, (void *)&result);
-    waitKey();
+    cv::setMouseCallback("Test After", onMouseEvent, (void *)&result);
+    cv::waitKey();
 
     return 0;
 }

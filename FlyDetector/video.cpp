@@ -19,6 +19,7 @@ void Video::setVideo(string path) {
     cout << "Name: " << endl;
     cout << "Frames: " << this->length << endl;
     cout << "Frame Rate: " << this->fps << endl;
+    cout << "Duration: " << this->duration << endl;
 }
 
 Frame Video::getFrameBySecond(double second) {

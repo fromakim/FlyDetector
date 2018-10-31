@@ -28,21 +28,8 @@ Mat Analyzer::setPointsAndTips(Mat source) {
 		}
 	}
 	sort(point.begin(), point.end(), pointCompare);
-	for (vector<Point>::iterator itor = point.begin(); itor != point.end(); ++itor) {
-		bool isSimilar = false;
 
-		for (vector<Point>::iterator tipItor = tip.begin(); tipItor != tip.end(); ++tipItor) {
-			if (abs(itor->x - tipItor->x) < EPSILON2) {
-				isSimilar = true;
-			}
-		}
-
-		if (!isSimilar) {
-			tip.push_back(*itor);
-		}
-	}
-
-	this->tip = vector<Point>(tip.begin(), tip.begin() + NUMBER_OF_ROI);
+	//this->tip = vector<Point>(tip.begin(), tip.begin() + NUMBER_OF_ROI);
 	/*
 	cout << endl << "TIP" << endl;
 	for (vector<Point>::iterator itor = tip.begin(); itor != tip.end(); ++itor) {
@@ -92,28 +79,6 @@ void Analyzer::calculateCriterion() {
 	cv::imshow("Set the initial location of flies", this->criterion);
 
 	setMouseCallback("Set the initial location of flies", onMouse, this);
-}
-
-void Analyzer::calculate(vector<Point> origin) {
-	int i = 0;
-
-	for (vector<Point>::iterator pointItor = this->point.begin(); pointItor != this->point.end(); ++pointItor) {
-		Point closest;
-		int xDiffMin = 99999;
-
-		for (vector<Point>::iterator tipItor = this->tip.begin(); tipItor != this->tip.end(); ++tipItor) {
-			double xdiff = abs(tipItor->x - pointItor->x);
-
-			if (xdiff < xDiffMin) {
-				xDiffMin = xdiff;
-				closest = *tipItor;
-			}
-		}
-
-		distance.push_back(abs(closest.y - pointItor->y));
-
-		cout << "Point " << *pointItor << ": " << closest << ", " << abs(closest.y - pointItor->y) << endl;
-	}
 }
 
 Point Analyzer::getClosestPoint(Point fly) {
@@ -185,4 +150,29 @@ void onMouse(int event, int x, int y, int flag, void *param) {
 	}
 
 	cv::imshow("Set the initial location of flies", analyzer->flylocation);
+}
+
+vector<double> Analyzer::getDistanceMoved(vector<double> flysize) {
+    return vector<double>();
+}
+
+void Analyzer::calculate(Mat color, vector<Point> origin) {
+    for (vector<Point>::iterator itor = origin.begin(); itor != origin.end(); ++itor) {
+        Point newFlyPoint = this->getClosestPoint(*itor);
+
+        cout << "OLD: " << *itor << endl;
+        cout << "NEW: " << newFlyPoint << endl;
+         
+        circle(color, *itor, 5, Scalar(255, 0, 0));             // Original: BLUE
+        circle(color, newFlyPoint, 5, Scalar(0, 0, 255));       // New: RED
+
+        distance.push_back(newFlyPoint.y - itor->y);
+    }
+
+    imshow("PROCEDURE", color);
+    waitKey();
+}
+
+void Analyzer::setDistanceZero() {
+    this->distance.clear();
 }
