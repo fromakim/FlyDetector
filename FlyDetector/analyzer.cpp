@@ -81,7 +81,7 @@ void Analyzer::calculateCriterion() {
 	setMouseCallback("Set the initial location of flies", onMouse, this);
 }
 
-Point Analyzer::getClosestPoint(Point fly) {
+Point Analyzer::getClosestPoint(Point fly, Point top, Point bottom) {
     Point closest;
     int diffMin = 99999;
     
@@ -90,6 +90,10 @@ Point Analyzer::getClosestPoint(Point fly) {
         int ydiff = abs(fly.y - itor->y);
 
         if (xdiff > EPSILON2) {
+            continue;
+        }
+
+        if (top.y > itor->y || bottom.y < itor->y) {
             continue;
         }
 
@@ -156,17 +160,45 @@ vector<double> Analyzer::getDistanceMoved(vector<double> flysize) {
     return vector<double>();
 }
 
-void Analyzer::calculate(Mat color, vector<Point> origin) {
+void Analyzer::calculate(Mat color, vector<Point> origin, vector<Point> surface1, vector<Point> surface2) {
     for (vector<Point>::iterator itor = origin.begin(); itor != origin.end(); ++itor) {
-        Point newFlyPoint = this->getClosestPoint(*itor);
+        Point topLimit, botLimit;
+        double min = 99999;
+
+        for (vector<Point>::iterator tItor = surface1.begin(); tItor != surface1.end(); ++tItor) {
+            Point fly = *itor;
+            Point temp = *tItor;
+            Point vec = fly - temp;
+
+            if (sqrt(vec.x * vec.x + vec.y * vec.y) < min) {
+                min = sqrt(vec.x * vec.x + vec.y * vec.y);
+                topLimit = temp;
+            }
+        }
+        min = 99999;
+        for (vector<Point>::iterator bItor = surface2.begin(); bItor != surface2.end(); ++bItor) {
+            Point fly = *itor;
+            Point temp = *bItor;
+            Point vec = fly - temp;
+
+            if (sqrt(vec.x * vec.x + vec.y * vec.y) < min) {
+                min = sqrt(vec.x * vec.x + vec.y * vec.y);
+                botLimit = temp;
+            }
+        }
+        
+        Point newFlyPoint = this->getClosestPoint(*itor, topLimit, botLimit);
 
         cout << "OLD: " << *itor << endl;
         cout << "NEW: " << newFlyPoint << endl;
-         
+        
         circle(color, *itor, 5, Scalar(255, 0, 0));             // Original: BLUE
         circle(color, newFlyPoint, 5, Scalar(0, 0, 255));       // New: RED
 
-        distance.push_back(newFlyPoint.y - itor->y);
+        if (newFlyPoint != Point(0, 0))
+            distance.push_back(newFlyPoint.y - itor->y);
+        else
+            distance.push_back(99999);
     }
 
     imshow("PROCEDURE", color);

@@ -25,9 +25,9 @@ public:
     vector<Point> getFlies();
 
 	void calculateCriterion();
-	void calculate(Mat color, vector<Point> origin);
+	void calculate(Mat color, vector<Point> origin, vector<Point> surface1, vector<Point> surface2);
 
-	Point getClosestPoint(Point fly);
+	Point getClosestPoint(Point fly, Point top, Point bottom);
 
     vector<double> getDistanceMoved(vector<double> flysize);
 

@@ -20,51 +20,6 @@ bool pointCompare(Point a, Point b) {
 	return (a.y > b.y);
 }
 
-Mat extractTip(Mat source, vector<Point> &tip) {
-    vector<KeyPoint> vertex;
-	vector<Point> vertexPoint;
-    Mat result = source.clone();
-    
-    FAST(source, vertex, 50, false);
-
-    for (vector<KeyPoint>::iterator itor = vertex.begin(); itor != vertex.end(); ++itor) {
-		bool isSimilar = false;
-
-		for (vector<Point>::iterator pointItor = vertexPoint.begin(); pointItor != vertexPoint.end(); ++pointItor) {
-			Point pt = itor->pt;
-			double distance = norm(pt - *pointItor);
-
-			if (distance < EPSILON1)
-				isSimilar = true;
-		}
-		if (!isSimilar) {
-			vertexPoint.push_back(itor->pt);
-		}
-    }
-	sort(vertexPoint.begin(), vertexPoint.end(), pointCompare);
-	for (vector<Point>::iterator itor = vertexPoint.begin(); itor != vertexPoint.end(); ++itor) {
-		bool isSimilar = false;
-		
-		for (vector<Point>::iterator tipItor = tip.begin(); tipItor != tip.end(); ++tipItor) {
-			if (abs(itor->x - tipItor->x) < EPSILON2) {
-				isSimilar = true;
-			}
-		}
-
-		if (!isSimilar) {
-			tip.push_back(*itor);
-		}
-	}
-	cout << endl << "TIP" << endl;
-	for (vector<Point>::iterator itor = tip.begin(); itor != tip.end(); ++itor) {
-		circle(result, *itor, 5, Scalar(0));
-		cout << *itor << " ";
-	}
-
-	cout << endl;
-    return result;
-}
-
 int main(int argc, char **argv) {
     Setup setup;
     Video video;
@@ -127,6 +82,7 @@ int main(int argc, char **argv) {
     setup.setFly(target);
     setup.setAngle();
     flySize = setup.getFlySize();
+    setup.setSurface();
 
     // Method 1
     Mat result = target.clone();
@@ -180,7 +136,7 @@ int main(int argc, char **argv) {
         cvtColor(bin, color, COLOR_GRAY2RGB);
 
 		analyzer.setPointsAndTips(bin);
-        analyzer.calculate(color, flies);
+        analyzer.calculate(color, flies, setup.getTopSurface(), setup.getBotSurface());
         distance = analyzer.getDistance();
         analyzer.setDistanceZero();
 

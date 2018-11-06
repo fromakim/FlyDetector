@@ -6,6 +6,8 @@ Mat Setup::control;
 Mat Setup::origin;
 Rect Setup::temp;
 bool Setup::mousedown = false;
+vector<Point> Setup::topSurface;
+vector<Point> Setup::botSurface;
 
 void Setup::getUserInput() {
     cout << "PATH: ";
@@ -196,4 +198,42 @@ vector<double> Setup::getFlySize() {
     cout << endl;
 
     return size;
+}
+
+void Setup::setSurface() {
+    namedWindow("Set Surface Location");
+    Mat temp = this->origin.clone();
+    cvtColor(Setup::origin, Setup::origin, COLOR_GRAY2RGB);
+    imshow("Set Surface Location", temp);
+    setMouseCallback("Set Surface Location", surfaceMouseCallback, &Setup::origin);
+    waitKey();
+}
+
+void Setup::surfaceMouseCallback(int event, int x, int y, int flag, void *param) {
+    Mat screen = ((Mat *)param)->clone();
+
+    line(screen, Point(x - 20, y), Point(x + 20, y), Scalar(0, 0, 255), 3);
+
+    switch (event) {
+        case EVENT_LBUTTONDOWN:
+            Setup::topSurface.push_back(Point(x, y));
+            line(Setup::origin, Point(x - 20, y), Point(x + 20, y), Scalar(0, 255, 0), 3);
+            screen = Setup::origin.clone();
+            break;
+        case EVENT_RBUTTONDOWN:
+            Setup::botSurface.push_back(Point(x, y));
+            line(Setup::origin, Point(x - 20, y), Point(x + 20, y), Scalar(255, 0, 0), 3);
+            screen = Setup::origin.clone();
+            break;
+    }
+
+    imshow("Set Surface Location", screen);
+}
+
+vector<Point> Setup::getTopSurface() {
+    return Setup::topSurface;
+}
+
+vector<Point> Setup::getBotSurface() {
+    return Setup::botSurface;
 }

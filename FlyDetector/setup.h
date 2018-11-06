@@ -17,16 +17,23 @@ class Setup {
     static Rect temp;
     static bool mousedown;
 
+    static vector<Point> topSurface;
+    static vector<Point> botSurface;
+
     public:
 
     void getUserInput();
     string getPath();
     double getFps();
+    vector<Point> getTopSurface();
+    vector<Point> getBotSurface();
 
     void setFly(Mat f);
     void setAngle();
     vector<double> getFlySize();
+    void setSurface();
 
     static void onMouse(int event, int x, int y, int flag, void *param);
+    static void surfaceMouseCallback(int event, int x, int y, int flag, void *param);
 };
 
